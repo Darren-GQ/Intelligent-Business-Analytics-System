@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101828">
+  <title>ChatBI · 智能数据工作台</title>
+  <link rel="stylesheet" href="/static/styles.css?v=agent-chat-1">
+</head>
+<body class="agent-workspace">
+  <div class="app-frame">
+    <aside class="sidebar" aria-label="主导航">
+      <a class="brand" href="/" aria-label="ChatBI 首页">
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M5 16V9m5 7V5m5 11v-4m4 7H3"/></svg>
+        </span>
+        <span><strong>ChatBI</strong><small>智能数据分析</small></span>
+      </a>
+
+      <nav class="nav-list">
+        <a class="nav-item" href="/metrics">指标管理</a>
+        <a class="nav-item active" href="#query-studio">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v11H8l-4 4V5Zm4 4h8M8 12h5"/></svg>
+          智能问数
+        </a>
+        <a class="nav-item" href="#current-result">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 19V9m7 10V5m7 14v-7"/></svg>
+          最近回复
+        </a>
+        <a class="nav-item" href="#history-panel">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12a8 8 0 1 0 2.3-5.7L4 8.5M4 4v4.5h4.5M12 8v5l3 2"/></svg>
+          查询记录
+        </a>
+        <a class="nav-item" href="#evaluation-dashboard">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h16M6 16V9m6 7V4m6 12v-5M5 5l4-2"/></svg>
+          评测看板
+        </a>
+      </nav>
+
+      <div class="sidebar-section">
+        <p>数据资产</p>
+        <div class="asset-row"><span>治理指标</span><strong data-indicator-count>61</strong></div>
+        <div class="asset-row"><span>业务数据表</span><strong data-table-count>30</strong></div>
+        <div class="asset-row"><span>语义字段</span><strong data-field-count>192</strong></div>
+      </div>
+
+      <div class="sidebar-footer">
+        <span class="status-dot" aria-hidden="true"></span>
+        <div><strong>本地安全模式</strong><small>只读查询 · AST 防护</small></div>
+      </div>
+    </aside>
+
+    <main class="workspace">
+      <header class="topbar">
+        <div>
+          <p class="breadcrumb">数据工作台 <span>/</span> <span data-workspace-label>智能问数</span></p>
+          <h1>智能数据工作台</h1>
+        </div>
+        <div id="service-health" class="service-health" role="status" aria-live="polite">
+          <span class="health-pulse" aria-hidden="true"></span>
+          <span><strong>正在检查服务</strong><small>DeepSeek · Qwen · Chroma · MySQL</small></span>
+        </div>
+      </header>
+
+      <div id="analysis-view" class="agent-layout">
+        <section id="query-studio" class="chat-shell" aria-label="Agent 对话工作区">
+          <header class="chat-toolbar">
+            <div class="chat-agent-identity"><span class="chat-agent-icon" aria-hidden="true">✦</span><div><h2>ChatBI Agent</h2><p>从一个问题，到一份有依据的分析</p></div></div>
+            <button class="text-button new-chat" type="button" data-new-analysis>＋ 新对话</button>
+          </header>
+          <div id="current-result" class="chat-scroll" tabindex="0" aria-label="对话记录">
+            <div id="chat-welcome" class="chat-welcome">
+              <span class="welcome-orbit" aria-hidden="true">✦</span>
+              <p class="eyebrow">YOUR DATA, IN CONVERSATION</p>
+              <h2>今天，想从数据里了解什么？</h2>
+              <p>直接提问，也可以逐步追问。<br>我会整理查询结果、分析过程和报告。</p>
+              <div class="examples" data-demo-examples aria-label="示例问题">
+                <button type="button" data-example="按地区统计已完成订单的销售额"><span>销售分析 ↗</span><strong>各地区的销售额怎么样？</strong></button>
+                <button type="button" data-example="各产品线的毛利率是多少？"><span>盈利分析 ↗</span><strong>看看产品线的毛利率</strong></button>
+                <button type="button" data-example="按仓库统计最新可用库存"><span>库存分析 ↗</span><strong>各仓库还有多少可用库存？</strong></button>
+                <button type="button" data-example="按成本中心统计预算执行率"><span>预算分析 ↗</span><strong>了解各成本中心预算执行情况</strong></button>
+              </div>
+              <div class="welcome-trust"><span><i class="ready-dot"></i>只读安全查询</span><span><b data-table-count>30</b> 张业务表</span><span><b data-indicator-count>61</b> 个治理指标</span></div>
+            </div>
+            <div id="chat-messages" class="chat-messages"></div>
+          </div>
+          <button id="jump-to-latest" class="jump-to-latest text-button" type="button" hidden>↓ 回到最新消息</button>
+          <div class="chat-composer-dock">
+            <div id="pending-action" class="pending-action" role="status" hidden></div>
+            <div id="analysis-context" class="analysis-context" aria-live="polite"></div>
+            <form id="query-form">
+              <label for="question" class="sr-only">发送业务问题或继续追问</label>
+              <div class="composer">
+                <textarea id="question" rows="2" maxlength="1000" aria-describedby="question-keyboard-hint" placeholder="向 ChatBI 提问，或继续追问分析结果…"></textarea>
+                <div class="composer-footer">
+                  <label class="review-plan-option"><input type="checkbox" id="review-plan">执行前确认计划</label>
+                  <div class="composer-actions"><span id="char-count">0 / 1000</span><button id="cancel-query" class="text-button" type="button" hidden>停止</button><button id="submit" class="primary" type="submit"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 14-7-4 14-3-6-7-1Zm7 1 7-8"/></svg><span>发送</span></button></div>
+                </div>
+              </div>
+              <div class="composer-underlay"><span id="status" role="status" aria-live="polite"><i class="ready-dot"></i>准备就绪</span><span class="keyboard-hint" id="question-keyboard-hint">Enter 发送 · Shift+Enter 换行</span></div>
+              <p id="input-error" class="input-error" role="alert"></p>
+            </form>
+          </div>
+        </section>
+        <aside id="report-workspace" class="report-workspace" aria-label="分析结果与报告" hidden>
+          <header class="artifact-header"><div><span class="eyebrow">ANALYSIS WORKSPACE</span><h2 id="artifact-title">分析结果</h2></div><div class="artifact-actions"><button id="expand-report" class="text-button" type="button" aria-pressed="false">展开</button><button id="close-report" class="icon-button" type="button" aria-label="关闭报告">×</button></div></header>
+          <p id="artifact-question" class="artifact-question"></p>
+          <div class="artifact-tabs" role="tablist" aria-label="结果视图">
+            <button id="tab-report" type="button" role="tab" aria-selected="true" aria-controls="artifact-content" data-artifact-tab="report">分析报告</button>
+            <button id="tab-data" type="button" role="tab" aria-selected="false" aria-controls="artifact-content" data-artifact-tab="data" tabindex="-1">数据图表</button>
+            <button id="tab-process" type="button" role="tab" aria-selected="false" aria-controls="artifact-content" data-artifact-tab="process" tabindex="-1">执行过程</button>
+            <button id="tab-sql" type="button" role="tab" aria-selected="false" aria-controls="artifact-content" data-artifact-tab="sql" tabindex="-1">SQL</button>
+          </div>
+          <div id="artifact-content" class="artifact-content" role="tabpanel" aria-labelledby="tab-report" tabindex="0"></div>
+        </aside>
+      </div>
+      <section id="history-view" class="content history-view" aria-label="查询历史" hidden>
+        <section id="history-panel" class="panel history-panel">
+          <div class="panel-header history-heading">
+            <div class="title-group">
+              <span class="title-icon soft" aria-hidden="true">
+                <svg viewBox="0 0 24 24"><path d="M4 12a8 8 0 1 0 2.3-5.7L4 8.5M4 4v4.5h4.5M12 8v5l3 2"/></svg>
+              </span>
+              <div><h2>查询历史</h2><p>本机持久保存 · 可追溯口径与报告</p></div>
+            </div>
+            <label><input type="checkbox" id="history-favorites"> 仅收藏</label>
+            <button id="clear-history" class="text-button" type="button">清理未收藏记录</button>
+          </div>
+          <div id="history" class="history-list">
+            <div class="history-empty">正在加载本机查询记录。</div>
+          </div>
+          <div class="history-pagination"><button id="history-prev" type="button" class="text-button" disabled>上一页</button><button id="history-next" type="button" class="text-button">下一页</button></div>
+        </section>
+
+      </section>
+      <section id="evaluation-dashboard" class="content evaluation-view" aria-label="评测看板" hidden>
+        <div class="panel evaluation-intro">
+          <div><p class="eyebrow">评测与运行质量</p><h2>检索与评测看板</h2><p>查看检索链路、真实模型验收、Token 消耗及本机运行记录。</p></div>
+          <button class="primary" type="button" id="refresh-evaluation">刷新看板</button>
+        </div>
+        <div id="evaluation-dashboard-content" aria-live="polite">正在读取评测报告…</div>
+      </section>
+    </main>
+  </div>
+  <script src="/static/vendor/echarts-5.6.0.min.js"></script>
+  <script type="module" src="/static/app.mjs?v=agent-chat-1"></script>
+</body>
+</html>
